@@ -64,8 +64,8 @@ mic_audio = mics{1};
 utils.figure()
 spectrogram(mic_audio,1024,120,[],fs,'yaxis')
 utils.print('Ej1_Espectrograma');
-% lo contrasto con la potencia en el espectro
 
+% lo contrasto con la potencia en el espectro
 xdft = fft(mic_audio);
 xdft = xdft(1:N/2+1);
 psdx = (1/(fs*N)) * abs(xdft).^2;

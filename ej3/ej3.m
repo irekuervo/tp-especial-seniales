@@ -14,3 +14,7 @@ for k = 1:(numel(mics)-1) % recorremos los audios
     tau = gccphat(mics{k+1}.',mics{k}.',fs);
     retardos_gccphat = [retardos_gccphat tau];
 end
+
+retardos_correlacion_cruzada
+retardos_gccphat
+retardos_IDFT

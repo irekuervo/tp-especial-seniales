@@ -1,42 +1,29 @@
 close all;
 
-wn = 10000; %ventana en muestras
-wt = ts*wn; %ventana en tiempo
+wn = 10000;
+dn = 1000;
 
-clc;
-fh = figure;
-%recorremos todo el audio
-for i=1:N-wn
-    %cada un wn graficamos el progreso de los calculos
-    if rem(i,wn) == 0
-        t=i*ts; %tiempo del ventaneo
-        figure(fh);
-        %% plot entero
-        subplot(3,1,1)
-        plot(xn,mics{1});
-        hold on;
-        line([t t], [-0.08 0.06],'Color','red')
-        hold off;
-        hold on;
-        subplot(3,1,1)
-        line([t+wt t+wt], [-0.08 0.06],'Color','red')
-        hold off;
-        ylim([-0.08 0.06])
-        %% plots de ventaneos
-        wn_i = i+wn-1;
-        if wn_i > N
-            wn_i = N;
-            wn = N - i + 1;
+tau_mics = [];
+
+for k = 2:numel(mics) % recorremos los audios
+    taus=[];
+    index = 1;
+    for n=1:dn:N-wn
+        tau = utils.tau_par_microfono(n,mics{k-1},mics{k},wn,@hamming,fs);
+        if tau > 0
+            taus = [taus tau];
         end
-        %%rectangular
-        ventaneo_rectangular = mics{1}(i:wn_i);
-        subplot(3,1,2);
-        plot(ventaneo_rectangular)
-        %% hamming
-        ventana_hamming = hamming(wn).';
-        ventaneo_hamming = ventaneo_rectangular.*ventana_hamming;
-        subplot(3,1,3);
-        plot(ventaneo_hamming)
-        drawnow;
+        %pause(.1)
     end
+%     h = histogram(taus,100000);
+%     [M,I] = max(h.Values);
+    tau_mics = [tau_mics taus(1)]
 end
+
+tau_mics
+
+
+
+
+
+

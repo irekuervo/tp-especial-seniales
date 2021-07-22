@@ -1,0 +1,27 @@
+close all;
+
+wn = 1000;
+dn = 1000;
+taus=[];
+index = 1;
+
+for k = 1:numel(mics) % recorremos los audios
+    for i=1:dn:N-wn
+        tau = utils.tau_par_microfono(i,mics{4},mics{5},wn,@hamming,fs);
+        if tau > 0
+            taus(index) = tau;
+            index = index + 1;
+        end
+        %pause(.1)
+    end
+    figure
+    h = histogram(taus,1000);
+    [M,I] = max(h.Values);
+    t = h.BinEdges(I+1)
+end
+
+
+
+
+
+
