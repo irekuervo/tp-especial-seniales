@@ -7,7 +7,7 @@ cuarto_x = [0 3]; %dimension x del cuarto
 cuarto_y = [0 4]; %dimension y del cuarto
 
 %datos de los audios de cada microfono
-load('audios1.mat');
+load('audios.mat');
 [numRows,numCols] = size(audios);
 
 N = numRows;

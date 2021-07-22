@@ -1,5 +1,7 @@
 close all;
 
+addpath('..');
+
 %% FIGURA 1 - vemos los audios superpuestos
 figure('Position', [100 100 1600 600])
 hold on
@@ -8,7 +10,7 @@ grid on
 for k = 1:numel(mics) % recorremos los audios 
     mic_audio = mics{k};
     mic_color = mics_colors{k};
-    plot_bonito(xn,mic_audio,mic_color);
+    utils.plot_mics(xn,mic_audio,mic_color);
 end
 
 lgd = legend('mic 1','mic 2','mic 3','mic 4','mic 5');
@@ -41,7 +43,7 @@ for k = 1:numel(mics) % recorremos los audios
     mic_audio = mics{k};
     mic_audio_segmento = mic_audio(xn0:xnf);
     mic_color = mics_colors{k};
-    plot_bonito(xn_seg,mic_audio_segmento,mic_color);
+    utils.plot_mics(xn_seg,mic_audio_segmento,mic_color);
 end
 
 lgd = legend('mic 1','mic 2','mic 3','mic 4','mic 5');
