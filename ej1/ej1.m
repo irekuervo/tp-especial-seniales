@@ -1,13 +1,13 @@
 close all;
 
-addpath('..');
+
 
 %% FIGURA 1 - vemos los audios superpuestos
 utils.figure()
 hold on
 grid on
 
-for k = 1:numel(mics) % recorremos los audios 
+for k = 5 % recorremos los audios 
     mic_audio = mics{k};
     mic_color = mics_colors{k};
     utils.plot_mics(xn,mic_audio,mic_color);
@@ -39,7 +39,7 @@ xn0 = round(x0/ts);
 xnf = round(xf/ts);
 
 
-for k = 1:numel(mics) % recorremos los audios 
+for k = 1:5 % recorremos los audios 
     mic_audio = mics{k};
     mic_audio_segmento = mic_audio(xn0:xnf);
     mic_color = mics_colors{k};
@@ -66,28 +66,12 @@ spectrogram(mic_audio,1024,120,[],fs,'yaxis')
 utils.print('Ej1_Espectrograma');
 
 % lo contrasto con la potencia en el espectro
-xdft = fft(mic_audio);
-xdft = xdft(1:N/2+1);
-psdx = (1/(fs*N)) * abs(xdft).^2;
-psdx(2:end-1) = 2*psdx(2:end-1);
-freq = 0:fs/N:fs/2;
 
 utils.figure()
-plot(freq,10*log10(psdx))
+periodogram(mic_audio,rectwin(N),N,fs)
 grid on
 title('Densidad Espectral de Potencia')
 xlabel('Frecuencia [Hz]')
 ylabel('Potencia/Frecuencia [dB/Hz]')
 utils.print('Ej1_PotenciaTotal');
 
-%como se trata de la voz humana, muestro el rango esperado
-%tomo el rango de 125 a 4k
-utils.figure()
-freq = 125:fs/N:4000;
-psdx = psdx(125:length(freq)+124);
-plot(freq,10*log10(psdx));
-grid on
-title('Densidad Espectral de Potencia')
-xlabel('Frecuencia [Hz]')
-ylabel('Potencia/Frecuencia [dB/Hz]')
-utils.print('Ej1_PotenciaRango');

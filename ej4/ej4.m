@@ -1,29 +1,10 @@
 close all;
 
-wn = 10000;
-dn = 1000;
+retardos_gccphat = [];
 
-tau_mics = [];
-
-for k = 2:numel(mics) % recorremos los audios
-    taus=[];
-    index = 1;
-    for n=1:dn:N-wn
-        tau = utils.tau_par_microfono(n,mics{k-1},mics{k},wn,@hamming,fs);
-        if tau > 0
-            taus = [taus tau];
-        end
-        %pause(.1)
-    end
-%     h = histogram(taus,100000);
-%     [M,I] = max(h.Values);
-    tau_mics = [tau_mics taus(1)]
+for k = 1:4 % recorremos los audios 
+    tau = utils.tau_ventaneo(mics{k+1},mics{k},fs,fs,@rectwin);
+    retardos_gccphat = [retardos_gccphat tau];
 end
 
-tau_mics
-
-
-
-
-
-
+retardos_gccphat
