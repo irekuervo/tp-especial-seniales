@@ -12,36 +12,63 @@ classdef utils
             dftx = fft(x,N);
             dfty = fft(y,N);
             Gph = (dftx.*conj(dfty))./(abs(dftx).*abs(dfty));
-            idftGph = ifft(Gph);
-            [M I] = max(idftGph);
+            gph = real(ifft(Gph));
+            [M I] = max(gph);
+            I = I - 1;
             if I > N/2
                 tau = (I-N)/fs;
             else
                 tau = I/fs;
             end
         end
-        %% Ventaneo
-        function [tau,tau_temporal] = tau_ventaneo(x,y,Nw,fs,window)
+        %% GCC PHAT Resampleado
+        function tau = tau_gcc_phat_resampleado(x,y,fs)
+            upsample = 100;
+            N=length(x);
+            dftx = fft(x,N);
+            dfty = fft(y,N);
+            Gph = (dftx.*conj(dfty))./(abs(dftx).*abs(dfty));
+            gph = real(ifft(Gph));
+            gph = resample(gph,upsample,1);
+            [M I] = max(gph);
+            I = I - 1;
+            if I > N/2
+                tau = (I-N*upsample)/(fs*upsample);
+            else
+                tau = I/(fs*upsample);
+            end
+        end
+        %% Ventaneo general
+        function [tau,tau_temporal] = ventaneo_general(x,y,Nw,fs,window,cggphat)
             N = length(x);
             n0 = Nw/2;
-            cantidadDeVentaneos = 100;
+            cantidadDeVentaneos = 500;
             dn = round(N/cantidadDeVentaneos);
-            resolucion = 10e6; %del histograma
             tau_temporal=[];
-            w = [window(Nw); zeros(N-Nw,1)]; %empieza centrada en n0
+            w = window(Nw);
+            lim = 10e-4;
             
             while n0 + Nw/2 < N
-                xw = x.*w;
-                yw = y.*w;
-                tau_window =  utils.tau_gcc_phat(xw,yw,fs);
-                tau_temporal = [tau_temporal, tau_window];
-                w = circshift(w,dn);
+                n_start = n0-Nw/2+1;
+                n_end = n0+Nw/2;
+                xw = x(n_start:n_end).*w;
+                yw = y(n_start:n_end).*w;
+                tau_window = cggphat(xw,yw,fs);
+                 %descarto valores muy grandes, o nulos
+                if abs(tau_window) < lim && abs(tau_window) > 0
+                    tau_temporal = [tau_temporal, tau_window];
+                end
                 n0 = n0 + dn;
             end
-            figure
-            h = histogram(tau_temporal,resolucion);
-            [maxcount, bin] = max(h.Values);
-           tau = h.BinEdges(bin);
+            tau = mode(tau_temporal);
+        end
+        %% Ventaneo
+        function [tau,tau_temporal] = tau_ventaneo(x,y,Nw,fs,window)
+            [tau,tau_temporal] = utils.ventaneo_general(x,y,Nw,fs,window,@utils.tau_gcc_phat);
+        end
+        %% Ventaneo Resampleado
+        function [tau,tau_temporal] = tau_ventaneo_resampleado(x,y,Nw,fs,window)
+           [tau,tau_temporal] = utils.ventaneo_general(x,y,Nw,fs,window,@utils.tau_gcc_phat_resampleado);
         end
         %% pendiente fuente
         % para esta disposicion de microfonos, la solucion puede ser el

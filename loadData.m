@@ -1,3 +1,6 @@
+clear all;
+close all;
+
 %constantes
 fs=48000;
 ts=1/fs;

@@ -25,11 +25,10 @@ refsig = audios(:,1);
 sig1 = audios(:,2);
 
 window_size = 2000;
-tau_est = gccphat(sig1,refsig,fs)
-tau1 = utils.tau_gcc_phat(sig1,refsig,fs,@rectwin)
-
-
-%tau2 = utils.tau_ventaneo(sig1,refsig,window_size,fs,@rectwin)
+tau0 = gccphat(sig1,refsig,fs)
+tau1 = utils.tau_gcc_phat(sig1,refsig,fs)
+tau2 = utils.tau_ventaneo(sig1,refsig,window_size,fs,@hamming)
+tau3 = utils.tau_ventaneo_resampleado(sig1,refsig,window_size,fs,@hamming)
 
 
 
