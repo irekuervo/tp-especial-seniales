@@ -12,13 +12,7 @@ load('audios.mat');
 N = numRows;
 xn=linspace(0,numRows*ts,numRows); %eje para todos los audios
 
-mics={};
-for k = 1:5 % recorremos los audios 
-    mic = audios(:,k);
-    %filename = sprintf('mic%d.wav',k);
-    %audiowrite(filename,mic,fs) %optativo para probar
-    mics = [mics, mic];
-end
+mics=audios; %nombre que me gusto mas
 
 %posicion de los mics y la fuente (hipoteticamente)
 mic1_pos=[2 1];

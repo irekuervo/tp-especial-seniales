@@ -19,20 +19,21 @@ classdef utils
             tau = I/fs;
         end
         %% Ventaneo
-        function tau = tau_ventaneo(x,y,Nw,fs,window)
-            n0 = 10000;
-            dn = Nw/4;
+        function [tau,tau_temporal] = tau_ventaneo(x,y,Nw,fs,window)
+            n0 = 1;
+            dn = Nw/10;
             N = length(x);
-            taus = [];
+            tau_temporal = [];
             while n0 + Nw < N
                 x_seg = x(n0:(n0+Nw-1));
                 y_seg = y(n0:(n0+Nw-1));
                 tau_window =  gccphat(x_seg,y_seg,fs);
                 %tau_window =  utils.tau_gcc_phat(x_seg,y_seg,fs,window);
-                taus = [taus, tau_window];
+                tau_temporal = [tau_temporal, tau_window];
                 n0 = n0 + dn;
             end
-            h = histogram(taus,Nw);
+            figure
+            h = histogram(tau_temporal,Nw);
             [maxcount, bin] = max(h.Values);
             tau = h.BinEdges(bin);
         end
@@ -47,8 +48,8 @@ classdef utils
         %% print
         % para mantener mismo estilo de plots
         function print(nombre)
-            filename = strcat(nombre,'png');
-            print(filename,'-dpng','-r300');
+            filename = strcat(nombre,'.png');
+            %print(filename,'-dpng','-r300');
         end
         %% print
         % para mantener mismo estilo de plots
