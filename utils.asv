@@ -26,22 +26,22 @@ classdef utils
             n0 = Nw/2;
             cantidadDeVentaneos = 100;
             dn = round(N/cantidadDeVentaneos);
-            resolucion = 10e6; %del histograma
             tau_temporal=[];
             w = [window(Nw); zeros(N-Nw,1)]; %empieza centrada en n0
             
             while n0 + Nw/2 < N
                 xw = x.*w;
                 yw = y.*w;
-                tau_window =  utils.tau_gcc_phat(xw,yw,fs);
+                tau_window =  gccphat(xw,yw,fs);
+                %tau_window =  utils.tau_gcc_phat(xw,yw,fs);
                 tau_temporal = [tau_temporal, tau_window];
                 w = circshift(w,dn);
                 n0 = n0 + dn;
             end
             figure
-            h = histogram(tau_temporal,resolucion);
+            h = histogram(tau_temporal,1000);
             [maxcount, bin] = max(h.Values);
-           tau = h.BinEdges(bin);
+           tau = (h.BinEdges(bin-1)+h.BinEdges(bin))/2;
         end
         %% pendiente fuente
         % para esta disposicion de microfonos, la solucion puede ser el

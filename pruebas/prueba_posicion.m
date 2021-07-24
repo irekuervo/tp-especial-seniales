@@ -8,7 +8,7 @@ run('loadData');
 figure
 grid on;
 hold on;
-fuente_pos=[3 3];
+fuente_pos=[1 3];
 plot(fuente_pos(1),fuente_pos(2),'x');
 %prueba manual de retardos asumiendo que la fuente esta en una posicion
 %conocida

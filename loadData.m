@@ -2,8 +2,8 @@
 fs=48000;
 ts=1/fs;
 c=340; %velocidad del sonido
-cuarto_x = [0 10]; %dimension x del cuarto
-cuarto_y = [0 10]; %dimension y del cuarto
+cuarto_x = [0 3]; %dimension x del cuarto
+cuarto_y = [0 4]; %dimension y del cuarto
 
 %datos de los audios de cada microfono
 load('audios.mat');
@@ -13,6 +13,8 @@ N = numRows;
 xn=linspace(0,numRows*ts,numRows); %eje para todos los audios
 
 mics=audios; %nombre que me gusto mas
+
+% soundsc(mics(:,2),fs) por si lo quiero escuchar
 
 %posicion de los mics y la fuente (hipoteticamente)
 mic1_pos=[2 1];

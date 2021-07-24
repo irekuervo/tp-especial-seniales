@@ -21,13 +21,15 @@ fs=48000;
 load('audios.mat');
 [numRows,numCols] = size(audios);
 
-refsig = audios(:,4);
-sig1 = audios(:,5);
+refsig = audios(:,1);
+sig1 = audios(:,2);
 
 window_size = 2000;
 tau_est = gccphat(sig1,refsig,fs)
 tau1 = utils.tau_gcc_phat(sig1,refsig,fs,@rectwin)
-tau2 = utils.tau_ventaneo(sig1,refsig,window_size,fs,@rectwin)
+
+
+%tau2 = utils.tau_ventaneo(sig1,refsig,window_size,fs,@rectwin)
 
 
 

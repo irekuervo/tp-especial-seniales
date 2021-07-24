@@ -1,15 +1,15 @@
 
-retardos_correlacion_cruzada = [];
-retardos_gccphat = [];
+retardos_correlacion_temporal = [];
+retardos_correlacion_espectral = [];
 
 for k = 1:4 % recorremos los audios 
     %correlacion cruzada
-    tau = utils.tau_correlacion_cruzada(mics(:,k+1),mics(:,k),fs);
-    retardos_correlacion_cruzada  = [retardos_correlacion_cruzada tau];
+    tau = utils.tau_correlacion_cruzada(mics(:,k),mics(:,k+1),fs);
+    retardos_correlacion_temporal  = [retardos_correlacion_temporal tau];
     %gccphat
-    tau = utils.tau_gcc_phat(mics(:,k+1),mics(:,k),fs,@rectwin);
-    retardos_gccphat = [retardos_gccphat tau];
+    tau = utils.tau_gcc_phat(mics(:,k),mics(:,k+1),fs,@rectwin);
+    retardos_correlacion_espectral = [retardos_correlacion_espectral tau];
 end
 
-retardos_correlacion_cruzada
-retardos_gccphat
+retardos_correlacion_temporal
+retardos_correlacion_espectral
