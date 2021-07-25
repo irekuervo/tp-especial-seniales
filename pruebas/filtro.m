@@ -1,19 +1,13 @@
 close all
 load chirp
 
-
-%soundsc(y,Fs)
-
 t = (0:length(y)-1)/Fs;
 
-bhi = fir1(20,[0.2 0.5],'bandpass');
+bhi = fir1(80,[0.02 0.5],'bandpass');
 figure
 freqz(bhi,1)
 
-
-
 outlo = filter(bhi,1,y);
-
 soundsc(outlo,Fs)
 
 figure

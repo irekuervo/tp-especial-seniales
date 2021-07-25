@@ -7,12 +7,18 @@ classdef utils
             tau = lags(index)/fs;
         end
         %% GCC PHAT
-        function tau = tau_gcc_phat(x,y,fs)
+        function gph = gcc_phat(x,y)
             N=length(x);
             dftx = fft(x,N);
             dfty = fft(y,N);
             Gph = (dftx.*conj(dfty))./(abs(dftx).*abs(dfty));
             gph = real(ifft(Gph));
+        end
+        
+        %% TAU GCC PHAT
+        function tau = tau_gcc_phat(x,y,fs)
+            gph = utils.gcc_phat(x,y);
+            N = length(gph);
             [M I] = max(gph);
             I = I - 1;
             if I > N/2
@@ -23,17 +29,31 @@ classdef utils
         end
         %% GCC PHAT Resampleado
         function tau = tau_gcc_phat_resampleado(x,y,fs)
-            upsample = 100;
-            N=length(x);
-            dftx = fft(x,N);
-            dfty = fft(y,N);
-            Gph = (dftx.*conj(dfty))./(abs(dftx).*abs(dfty));
-            gph = real(ifft(Gph));
-            gph = resample(gph,upsample,1);
+            rate = 100;
+            x = upsample(x,rate);
+            y = upsample(y,rate);
+            gph = utils.gcc_phat(x,y);
+            N = length(gph);
             [M I] = max(gph);
             I = I - 1;
             if I > N/2
-                tau = (I-N*upsample)/(fs*upsample);
+                tau = (I-N)/(fs*rate);
+            else
+                tau = I/(fs*rate);
+            end
+        end
+        %% GCC PHAT Interpolado
+        function tau = tau_gcc_phat_interpolado(x,y,fs)
+            upsample = 100;
+            gph = utils.gcc_phat(x,y);
+            x = 1:length(x);
+            xq = 1:2*length(x);
+            gph = resample(gph,upsample,1);
+            N = length(gph);
+            [M I] = max(gph);
+            I = I - 1;
+            if I > N/2
+                tau = (I-N)/(fs*upsample);
             else
                 tau = I/(fs*upsample);
             end
@@ -46,7 +66,7 @@ classdef utils
             dn = round(N/cantidadDeVentaneos);
             tau_temporal=[];
             w = window(Nw);
-            lim = 10e-4;
+            lim = 10e-3;
             
             while n0 + Nw/2 < N
                 n_start = n0-Nw/2+1;
@@ -70,13 +90,43 @@ classdef utils
         function [tau,tau_temporal] = tau_ventaneo_resampleado(x,y,Nw,fs,window)
             [tau,tau_temporal] = utils.ventaneo_general(x,y,Nw,fs,window,@utils.tau_gcc_phat_resampleado);
         end
+        %% Ventaneo Interpolado
+        function [tau,tau_temporal] = tau_ventaneo_interpolado(x,y,Nw,fs,window)
+            [tau,tau_temporal] = utils.ventaneo_general(x,y,Nw,fs,window,@utils.tau_gcc_phat_interpolado);
+        end
         %% pendiente fuente
         % para esta disposicion de microfonos, la solucion puede ser el
         % signo opuesto al que se devuelve, dependera de si es viable por
         % las dimensiones del cuarto
-        function [angulo, pendiente]= pendiente_fuente(t_retardo,distancia,velocidad)
-            angulo = acos((velocidad*t_retardo)/distancia);
+        function [angulo, pendiente]= pendiente_fuente(t_retardo)
+            v_sonido = 340;
+            distancia = 0.05;
+            angulo = acos((v_sonido*t_retardo)/distancia);
             pendiente = tan(angulo);
+        end
+        %% plot habitacion
+        % para esta disposicion de microfonos, la solucion puede ser el
+        % signo opuesto al que se devuelve, dependera de si es viable por
+        % las dimensiones del cuarto
+        function plot_habitacion(retardos,cuarto_x,cuarto_y,mics_pos,mics_color)
+            figure
+            grid on;
+            hold on;
+            xlim(cuarto_x);
+            ylim(cuarto_y);
+            for k = 1:5 % recorremos los audios
+                mic_pos = mics_pos{k};
+                plot(mic_pos(1),mic_pos(2),'o','Color',mics_color{k});
+            end
+            lgd = legend('mic 1','mic 2','mic 3','mic 4','mic 5');
+            x_pos = linspace(0,cuarto_x(2));
+            for k = 1:4
+                [angulo, pendiente] = utils.pendiente_fuente(retardos(k));
+                xk = mics_pos{k}(1);
+                yk = mics_pos{k}(2);
+                y_pos1 = pendiente.*x_pos + (yk - pendiente.*xk);
+                plot(x_pos,y_pos1);
+            end
         end
         %% print
         % para mantener mismo estilo de plots
@@ -103,7 +153,6 @@ classdef utils
             P1 = P2(1:N/2+1);
             P1(2:end-1) = 2*P1(2:end-1);
             f = fs*(0:(N/2))/N;
-            figure
             semilogx(f,P1)
             title('Single-Sided Amplitude Spectrum of X(t)')
             xlabel('f (Hz)')
