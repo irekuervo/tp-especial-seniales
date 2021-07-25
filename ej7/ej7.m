@@ -1,24 +1,21 @@
 clear all
 
 run('loadData');
-
+fi
+filtro = fir1(120,[0.006 0.1],'bandpass',hamming(121));
 %% agrego el ruido y filtro
 for k = 1:5 % recorremos los audios 
     noisy = awgn(mics(:,k),20,'measured');
-    filtro = fir1(80,[0.006 0.1],'bandpass',hamming(81));
+    
     filtered = filter(filtro,1,noisy);
     mics(:,k) = filtered;
 end
 
 %% ventaneo
-retardos_gccphat = [];
+gcc_ventaneo_upsample = [];
 Nw = 2000;
 for k = 1:4 % recorremos los audios 
     [tau,tau_temporal] = utils.tau_ventaneo_resampleado(mics(:,k),mics(:,k+1),Nw,fs,@hamming);
-    retardos_gccphat = [retardos_gccphat tau];
-    %utils.figure();
-    %plot(tau_temporal);
-    %file_name = sprintf('tau_temporal_mic%d%d', k,k+1);
-    %utils.print(file_name);
+    gcc_ventaneo_upsample = [gcc_ventaneo_upsample tau];
 end
-retardos_gccphat
+gcc_ventaneo_upsample

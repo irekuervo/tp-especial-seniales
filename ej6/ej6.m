@@ -9,14 +9,10 @@ for k = 1:5 % recorremos los audios
 end
 
 %% ventaneo
-retardos_gccphat = [];
+gcc_ventaneo_upsample = [];
 Nw = 2000;
 for k = 1:4 % recorremos los audios 
     [tau,tau_temporal] = utils.tau_ventaneo_resampleado(mics(:,k),mics(:,k+1),Nw,fs,@hamming);
-    retardos_gccphat = [retardos_gccphat tau];
-    %utils.figure();
-    %plot(tau_temporal);
-    %file_name = sprintf('tau_temporal_mic%d%d', k,k+1);
-    %utils.print(file_name);
+    gcc_ventaneo_upsample = [gcc_ventaneo_upsample tau];
 end
-retardos_gccphat
+gcc_ventaneo_upsample
