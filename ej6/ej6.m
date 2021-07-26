@@ -1,6 +1,7 @@
+close all
 clear all
-
-run('loadData');
+run('utils')
+run('loadData')
 
 %% agrego el ruido
 for k = 1:5 % recorremos los audios 

@@ -108,36 +108,37 @@ classdef utils
         % para esta disposicion de microfonos, la solucion puede ser el
         % signo opuesto al que se devuelve, dependera de si es viable por
         % las dimensiones del cuarto
-        function plot_habitacion(retardos,cuarto_x,cuarto_y,mics_pos,mics_color)
+        function plot_habitacion(retardos,fuente_pos,cuarto_x,cuarto_y,mics_pos,mics_color)
             figure
             grid on;
             hold on;
             xlim(cuarto_x);
             ylim(cuarto_y);
-            for k = 1:5 % recorremos los audios
+            for k = 1:5 % graficamos los mics
                 mic_pos = mics_pos{k};
                 plot(mic_pos(1),mic_pos(2),'o','Color',mics_color{k});
             end
-            lgd = legend('mic 1','mic 2','mic 3','mic 4','mic 5');
+            plot(fuente_pos(1),fuente_pos(2),'*','Color','black','MarkerSize',10);
             x_pos = linspace(0,cuarto_x(2));
             for k = 1:4
                 [angulo, pendiente] = utils.pendiente_fuente(retardos(k));
-                xk = mics_pos{k}(1);
-                yk = mics_pos{k}(2);
+                xk = mics_pos{k+1}(1);
+                yk = mics_pos{k+1}(2);
                 y_pos1 = pendiente.*x_pos + (yk - pendiente.*xk);
-                plot(x_pos,y_pos1);
+                plot(x_pos,y_pos1,'Color',mics_color{k+1});
             end
+            legend('mic 1','mic 2','mic 3','mic 4','mic 5','fuente','par 1-2','par 2-3','par 3-4','par 4-5');
         end
         %% print
         % para mantener mismo estilo de plots
         function print(nombre)
             filename = strcat(nombre,'.png');
-            %print(filename,'-dpng','-r300');
+            print(filename,'-dpng','-r300');
         end
         %% figure
         % para mantener mismo estilo de plots
         function figure()
-            figure('Position', [100 100 1600 600])
+            figure('Position', [50 -50 800 300])
         end
         %% plot_mics
         % para mantener consistencia de colores e identificar bien a los
@@ -154,9 +155,7 @@ classdef utils
             P1(2:end-1) = 2*P1(2:end-1);
             f = fs*(0:(N/2))/N;
             semilogx(f,P1)
-            title('Single-Sided Amplitude Spectrum of X(t)')
-            xlabel('f (Hz)')
-            ylabel('|P1(f)|')
+            
         end
     end
 end

@@ -1,3 +1,8 @@
+close all
+clear all
+run('utils')
+run('loadData')
+
 %de forma grafica y aproximada, se exportan los data cursor de 5 maximos
 %arbitrarios de las señales superpuestas que sirven de referencia para
 %calcular los retardos entre microfonos
@@ -23,25 +28,8 @@
 %cartesiano centrado en el primer microfono
 
 %aca esta el resultado
-retardos_a_ojo = 1.0e-06 *[-62.5000  -62.5000  -83.3333  -83.3333]
-figure
-grid on;
-hold on;
-xlim(cuarto_x);
-ylim(cuarto_y);
-x_pos = linspace(0,cuarto_x(2));
-
-for k = 1:4 % recorremos los audios
-    mic_pos = mics_pos{k};
-    plot(mic_pos(1),mic_pos(2),'o');
-    [angulo, pendiente] = utils.pendiente_fuente(retardos_a_ojo(k),0.05,c);
-    xk = mics_pos{k}(1);
-    yk = mics_pos{k}(2);
-    y_pos1 = pendiente.*x_pos + (yk - pendiente.*xk);
-    y_pos2 = -pendiente.*x_pos + (yk + pendiente.*xk);
-    plot(x_pos,y_pos1);
-    plot(x_pos,y_pos2);
-end
-
-
+retardos = 1.0e-06 *[-62.5000  -62.5000  -83.3333  -83.3333]
+posicion = [1.86 1.45]
+utils.plot_habitacion(retardos,posicion,cuarto_x,cuarto_y,mics_pos,mics_colors)
+utils.print('Ej2_Fuente')
 

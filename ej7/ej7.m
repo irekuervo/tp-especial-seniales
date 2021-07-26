@@ -1,7 +1,8 @@
+close all
 clear all
+run('utils')
+run('loadData')
 
-run('loadData');
-fi
 filtro = fir1(120,[0.006 0.1],'bandpass',hamming(121));
 %% agrego el ruido y filtro
 for k = 1:5 % recorremos los audios 

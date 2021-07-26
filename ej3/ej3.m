@@ -1,3 +1,7 @@
+close all
+clear all
+run('utils')
+run('loadData')
 
 corr_temp = [];
 gcc_sin_ventaneo = [];

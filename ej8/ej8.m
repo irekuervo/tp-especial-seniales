@@ -1,5 +1,6 @@
-clear all
 close all
+clear all
+run('utils')
 run('loadData')
 
 retardos = [-3*ts -6*ts -9*ts -12*ts];

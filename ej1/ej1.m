@@ -1,8 +1,9 @@
-close all;
+close all
+clear all
+run('utils')
+run('loadData')
 
-
-
-%% FIGURA 1 - vemos los audios superpuestos
+%% FIGURA 1 - audios superpuestos
 utils.figure()
 hold on
 grid on
@@ -26,7 +27,7 @@ ylabel('Amplitud');
 utils.print('Ej1_AudiosSuperpuestos');
 
 
-%% FIGURA 2 - vemos un segmento de los audios
+%% FIGURA 2 - segmento arbitrario de audios superpuestos
 
 utils.figure()
 hold on
@@ -57,29 +58,32 @@ xlabel('Tiempo (s)');
 ylabel('Amplitud');
 utils.print('Ej1_SegmentoAudios');
 
-%% FIGURA 3 - analisis de espectro para la potencia
+%% FIGURA 3 - analisis del espectro
 mic_audio = mics(:,1);
 
-% veo en el tiempo como se compoirta
+% veo en el tiempo como se comporta
 utils.figure()
-spectrogram(mic_audio,1024,120,[],fs,'yaxis')
+spectrogram(mic_audio,hamming(1024),[],'yaxis')
 utils.print('Ej1_Espectrograma');
 
-% lo contrasto con la potencia en el espectro
 
+% veo el espectro de todo el audio
 utils.figure()
-[pxx,f] = periodogram(mic_audio,rectwin(N),N,fs);
+utils.plot_fft(mic_audio,fs)
 grid on
-title('Densidad Espectral de Potencia')
-xlabel('Frecuencia [Hz]')
-ylabel('Potencia/Frecuencia [dB/Hz]')
-utils.print('Ej1_PotenciaTotal');
+title('Espectro del microfono 1')
+xlabel('f [db/Hz]')
+ylabel('|Fft(f)|')
+utils.print('Ej1_EspectroTotal');
 
+% veo el espectro del silencio
 utils.figure()
-loglog(f,pxx);
+utils.plot_fft(mic_audio(1:24000),fs)
 grid on
-title('Densidad Espectral de Potencia')
-xlabel('Frecuencia [Hz]')
-ylabel('Potencia/Frecuencia [dB/Hz]')
-utils.print('Ej1_PotenciaTotal');
+title('Espectro del microfono 1')
+xlabel('f [db/Hz]')
+ylabel('|Fft(f)|')
+utils.print('Ej1_EspectroSilencio');
+
+
 
