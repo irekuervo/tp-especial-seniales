@@ -1,7 +1,5 @@
-close all
-clear all
-run('utils')
-run('loadData')
+display('----------Ejercicio 3-----------');
+%si se quiere correr solo, correr loadData y utils
 
 corr_temp = [];
 gcc_sin_ventaneo = [];
@@ -17,3 +15,9 @@ end
 
 corr_temp
 gcc_sin_ventaneo
+
+posicion = [1.86 1.45]
+utils.plot_habitacion(corr_temp,posicion,cuarto_x,cuarto_y,mics_pos,mics_colors)
+utils.print('Ej3_Habitacion_cor_temp')
+utils.plot_habitacion(gcc_sin_ventaneo,posicion,cuarto_x,cuarto_y,mics_pos,mics_colors)
+utils.print('Ej3_Habitacion_gcc_temp')

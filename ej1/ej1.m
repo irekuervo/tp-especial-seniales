@@ -1,7 +1,4 @@
-close all
-clear all
-run('utils')
-run('loadData')
+display('----------Ejercicio 1-----------');
 
 %% FIGURA 1 - audios superpuestos
 utils.figure()

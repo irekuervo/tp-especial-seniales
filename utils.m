@@ -9,8 +9,8 @@ classdef utils
         %% GCC PHAT
         function gph = gcc_phat(x,y)
             N=length(x);
-            dftx = fft(x,N);
-            dfty = fft(y,N);
+            dftx = fft(x);
+            dfty = fft(y);
             Gph = (dftx.*conj(dfty))./(abs(dftx).*abs(dfty));
             gph = real(ifft(Gph));
         end
@@ -30,12 +30,11 @@ classdef utils
         %% GCC PHAT Resampleado
         function tau = tau_gcc_phat_resampleado(x,y,fs)
             rate = 100;
-            x = upsample(x,rate);
-            y = upsample(y,rate);
             gph = utils.gcc_phat(x,y);
+            gph = resample(gph,rate,1,10);
             N = length(gph);
             [M I] = max(gph);
-            I = I - 1;
+            I = I - rate;
             if I > N/2
                 tau = (I-N)/(fs*rate);
             else
@@ -44,25 +43,24 @@ classdef utils
         end
         %% GCC PHAT Interpolado
         function tau = tau_gcc_phat_interpolado(x,y,fs)
-            upsample = 100;
+            rate = 100;
+            
             gph = utils.gcc_phat(x,y);
-            x = 1:length(x);
-            xq = 1:2*length(x);
-            gph = resample(gph,upsample,1);
+            
             N = length(gph);
             [M I] = max(gph);
-            I = I - 1;
+            I = I - rate;
             if I > N/2
-                tau = (I-N)/(fs*upsample);
+                tau = (I-N)/(fs*rate);
             else
-                tau = I/(fs*upsample);
+                tau = I/(fs*rate);
             end
         end
         %% Ventaneo general
-        function [tau,tau_temporal] = ventaneo_general(x,y,Nw,fs,window,cggphat)
+        function tau_temporal = ventaneo_general(x,y,Nw,fs,window,cggphat)
             N = length(x);
             n0 = Nw/2;
-            cantidadDeVentaneos = 500;
+            cantidadDeVentaneos = 1000;
             dn = round(N/cantidadDeVentaneos);
             tau_temporal=[];
             w = window(Nw);
@@ -80,19 +78,18 @@ classdef utils
                 end
                 n0 = n0 + dn;
             end
-            tau = mode(tau_temporal);
         end
         %% Ventaneo
-        function [tau,tau_temporal] = tau_ventaneo(x,y,Nw,fs,window)
-            [tau,tau_temporal] = utils.ventaneo_general(x,y,Nw,fs,window,@utils.tau_gcc_phat);
+        function tau_temporal = tau_ventaneo(x,y,Nw,fs,window)
+            tau_temporal = utils.ventaneo_general(x,y,Nw,fs,window,@utils.tau_gcc_phat);
         end
         %% Ventaneo Resampleado
-        function [tau,tau_temporal] = tau_ventaneo_resampleado(x,y,Nw,fs,window)
-            [tau,tau_temporal] = utils.ventaneo_general(x,y,Nw,fs,window,@utils.tau_gcc_phat_resampleado);
+        function tau_temporal = tau_ventaneo_resampleado(x,y,Nw,fs,window)
+            tau_temporal = utils.ventaneo_general(x,y,Nw,fs,window,@utils.tau_gcc_phat_resampleado);
         end
         %% Ventaneo Interpolado
-        function [tau,tau_temporal] = tau_ventaneo_interpolado(x,y,Nw,fs,window)
-            [tau,tau_temporal] = utils.ventaneo_general(x,y,Nw,fs,window,@utils.tau_gcc_phat_interpolado);
+        function tau_temporal = tau_ventaneo_interpolado(x,y,Nw,fs,window)
+            tau_temporal = utils.ventaneo_general(x,y,Nw,fs,window,@utils.tau_gcc_phat_interpolado);
         end
         %% pendiente fuente
         % para esta disposicion de microfonos, la solucion puede ser el
